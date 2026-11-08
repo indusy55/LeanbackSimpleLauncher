@@ -27,7 +27,7 @@ public final class LauncherActivity extends Activity implements AppGridView.List
     private static final String PHONE_SETTINGS_CLASS = "com.android.settings.Settings";
 
     private AppGridView grid;
-    private TextView settingsButton;
+    private View settingsButton;
     private TextView clockTime;
     private TextView clockDate;
     private IconCache icons;

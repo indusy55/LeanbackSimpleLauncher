@@ -12,29 +12,11 @@
         android:paddingTop="@dimen/safe_top"
         android:paddingEnd="@dimen/safe_x">
 
-        <TextView
-            android:id="@+id/settings"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/pill_height"
-            android:layout_gravity="start|center_vertical"
-            android:background="@drawable/pill"
-            android:clickable="true"
-            android:drawableStart="@drawable/ic_settings"
-            android:drawablePadding="10dp"
-            android:drawableTint="@color/pill_text"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:paddingStart="14dp"
-            android:paddingEnd="18dp"
-            android:text="@string/settings"
-            android:textColor="@color/pill_text"
-            android:textSize="@dimen/pill_text_size" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|top"
-            android:gravity="end"
+            android:layout_gravity="start|top"
+            android:gravity="start"
             android:orientation="vertical">
 
             <TextView
@@ -55,6 +37,20 @@
                 android:textColor="@color/muted"
                 android:textSize="@dimen/clock_date_size" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/settings"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@drawable/pill"
+            android:clickable="true"
+            android:contentDescription="@string/settings"
+            android:focusable="true"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_settings"
+            android:tint="@color/pill_text" />
 
         <View
             android:layout_width="match_parent"
