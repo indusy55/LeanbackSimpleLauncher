@@ -44,7 +44,6 @@ public final class AppGridView extends View {
     private static final int GHOST_FILL = 0x1A4C8DFF;
     private static final int GHOST_STROKE = 0x8C4C8DFF;
     private static final int TILE_STROKE = 0x0EFFFFFF;
-    private static final int ICON_RING = 0x1FFFFFFF;
 
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -343,10 +342,6 @@ public final class AppGridView extends View {
             if (bitmap != null) {
                 iconPaint.setAlpha(alpha);
                 canvas.drawBitmap(bitmap, null, iconRect, iconPaint);
-                stroke.setColor(ICON_RING);
-                stroke.setStrokeWidth(1f);
-                stroke.setAlpha(alpha);
-                canvas.drawRoundRect(iconRect, dp(16), dp(16), stroke);
             } else {
                 fill.setColor(colorPlaceholder);
                 fill.setAlpha(alpha);
