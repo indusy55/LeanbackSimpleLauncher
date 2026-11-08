@@ -2,8 +2,11 @@
 <resources>
     <string name="app_name">簡易電視桌面</string>
     <string name="settings">設定</string>
-    <string name="hold_to_move">長按 OK 移動應用</string>
+    <string name="hold_for_menu">長按 OK 更多</string>
+    <string name="open">開啟</string>
     <string name="move">移動</string>
+    <string name="app_info">應用程式資訊</string>
+    <string name="uninstall">解除安裝</string>
     <string name="drop">放置</string>
     <string name="cancel">取消</string>
     <string name="empty">沒有應用程式</string>

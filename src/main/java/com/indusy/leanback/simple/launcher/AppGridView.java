@@ -33,7 +33,14 @@ public final class AppGridView extends View {
         void onFocusSettings();
 
         void onOrderChanged();
+
+        void onMenuAction(int action, AppEntry app);
     }
+
+    static final int ACTION_OPEN = 0;
+    static final int ACTION_MOVE = 1;
+    static final int ACTION_INFO = 2;
+    static final int ACTION_UNINSTALL = 3;
 
     private static final int COLS = 5;
     private static final long SCROLL_MS = 190L;
@@ -44,6 +51,9 @@ public final class AppGridView extends View {
     private static final int GHOST_FILL = 0x1A4C8DFF;
     private static final int GHOST_STROKE = 0x8C4C8DFF;
     private static final int TILE_STROKE = 0x0EFFFFFF;
+    private static final int MENU_SCRIM = 0xB3000000;
+    private static final int MENU_BG = 0xFF1B1D23;
+    private static final int MENU_UNINSTALL = 0xFFFF7A7A;
 
     private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -53,6 +63,8 @@ public final class AppGridView extends View {
     private final Paint hintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint hintBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint emptyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint menuTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint menuRowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private final RectF rect = new RectF();
     private final RectF iconRect = new RectF();
@@ -106,12 +118,20 @@ public final class AppGridView extends View {
     private boolean loaded;
     private boolean animPosted;
     private CharSequence moveHint;
+    private CharSequence menuTitle;
+    private CharSequence[] menuLabels;
+    private int menuIndex = -1;
+    private int menuSelection;
+    private float menuTitleAscent;
+    private float menuTitleDescent;
+    private float menuRowAscent;
+    private float menuRowDescent;
 
     private final Runnable holdRunnable = new Runnable() {
         @Override
         public void run() {
             suppressClick = true;
-            enterMove();
+            openMenu();
         }
     };
 
@@ -180,8 +200,23 @@ public final class AppGridView extends View {
 
         dash = new DashPathEffect(new float[]{dp(8), dp(6)}, 0f);
 
-        holdHint = context.getString(R.string.hold_to_move);
+        holdHint = context.getString(R.string.hold_for_menu);
         emptyHint = context.getString(R.string.empty);
+        menuLabels = new CharSequence[]{
+                context.getString(R.string.open),
+                context.getString(R.string.move),
+                context.getString(R.string.app_info),
+                context.getString(R.string.uninstall)
+        };
+        menuTitlePaint.setColor(0xFFF4F5F7);
+        menuTitlePaint.setTextSize(sp(22));
+        menuRowPaint.setTextSize(sp(20));
+        Paint.FontMetrics titleMetrics = menuTitlePaint.getFontMetrics();
+        menuTitleAscent = titleMetrics.ascent;
+        menuTitleDescent = titleMetrics.descent;
+        Paint.FontMetrics rowMetrics = menuRowPaint.getFontMetrics();
+        menuRowAscent = rowMetrics.ascent;
+        menuRowDescent = rowMetrics.descent;
 
         setFocusable(true);
         setFocusableInTouchMode(true);
@@ -299,6 +334,52 @@ public final class AppGridView extends View {
         }
 
         drawHints(canvas, w, h);
+
+        if (menuIndex >= 0) {
+            drawMenu(canvas, w, h);
+        }
+    }
+
+    private void drawMenu(Canvas canvas, int w, int h) {
+        canvas.drawColor(MENU_SCRIM);
+
+        float panelW = Math.min(dp(560), w - padL * 2);
+        float rowH = dp(60);
+        float headerH = dp(76);
+        float padV = dp(16);
+        float panelH = headerH + menuLabels.length * rowH + padV;
+        float left = (w - panelW) / 2f;
+        float top = (h - panelH) / 2f;
+
+        rect.set(left, top, left + panelW, top + panelH);
+        fill.setColor(MENU_BG);
+        fill.setAlpha(255);
+        canvas.drawRoundRect(rect, dp(20), dp(20), fill);
+        stroke.setColor(0x1AFFFFFF);
+        stroke.setStrokeWidth(1f);
+        stroke.setAlpha(255);
+        canvas.drawRoundRect(rect, dp(20), dp(20), stroke);
+
+        menuTitlePaint.setColor(0xFFF4F5F7);
+        float titleBaseline = top + headerH / 2f - (menuTitleAscent + menuTitleDescent) / 2f;
+        canvas.drawText(menuTitle, 0, menuTitle.length(), left + dp(28), titleBaseline, menuTitlePaint);
+
+        for (int i = 0; i < menuLabels.length; i++) {
+            float rowTop = top + headerH + i * rowH;
+            boolean selected = i == menuSelection;
+            if (selected) {
+                rect.set(left + dp(8), rowTop, left + panelW - dp(8), rowTop + rowH - dp(4));
+                fill.setColor(colorFocus);
+                fill.setAlpha(255);
+                canvas.drawRoundRect(rect, dp(12), dp(12), fill);
+            }
+            menuRowPaint.setColor(selected ? 0xFF0B0C0F
+                    : (i == ACTION_UNINSTALL ? MENU_UNINSTALL : colorTextDim));
+            float baseline = rowTop + (rowH - dp(4)) / 2f
+                    - (menuRowAscent + menuRowDescent) / 2f;
+            canvas.drawText(menuLabels[i], 0, menuLabels[i].length(),
+                    left + dp(32), baseline, menuRowPaint);
+        }
     }
 
     private void drawTile(Canvas canvas, AppEntry app, int index, float x, float y) {
@@ -397,7 +478,9 @@ public final class AppGridView extends View {
     }
 
     private void updateContentDescription() {
-        if (moving) {
+        if (menuIndex >= 0) {
+            setContentDescription(menuTitle);
+        } else if (moving) {
             setContentDescription(getContext().getString(R.string.move));
         } else if (focus >= 0 && focus < apps.size()) {
             setContentDescription(apps.get(focus).label);
@@ -455,11 +538,53 @@ public final class AppGridView extends View {
         }
     }
 
+    private void openMenu() {
+        if (apps.isEmpty() || moving) {
+            return;
+        }
+        menuIndex = focus;
+        menuSelection = 0;
+        float maxWidth = Math.min(dp(560), getWidth() - padL * 2) - dp(56);
+        menuTitle = TextUtils.ellipsize(apps.get(focus).label, menuTitlePaint,
+                maxWidth, TextUtils.TruncateAt.END);
+        updateContentDescription();
+        invalidate();
+    }
+
+    private void closeMenu() {
+        if (menuIndex < 0) {
+            return;
+        }
+        menuIndex = -1;
+        updateContentDescription();
+        invalidate();
+    }
+
+    private void executeMenu() {
+        if (menuIndex < 0) {
+            return;
+        }
+        suppressClick = true;
+        int action = menuSelection;
+        AppEntry app = apps.get(menuIndex);
+        menuIndex = -1;
+        updateContentDescription();
+        invalidate();
+        if (listener != null) {
+            listener.onMenuAction(action, app);
+        }
+    }
+
+    void startMove() {
+        enterMove();
+    }
+
     private void enterMove() {
         if (apps.isEmpty() || moving) {
             return;
         }
         moving = true;
+        menuIndex = -1;
         moveFrom = focus;
         moveHint = getContext().getString(R.string.move) + "   ·   OK "
                 + getContext().getString(R.string.drop) + "   ·   BACK "
@@ -508,6 +633,30 @@ public final class AppGridView extends View {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (apps.isEmpty()) {
             return super.onKeyDown(keyCode, event);
+        }
+        if (menuIndex >= 0) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    menuSelection = (menuSelection + menuLabels.length - 1) % menuLabels.length;
+                    invalidate();
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                    menuSelection = (menuSelection + 1) % menuLabels.length;
+                    invalidate();
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_CENTER:
+                case KeyEvent.KEYCODE_ENTER:
+                case KeyEvent.KEYCODE_NUMPAD_ENTER:
+                    if (event.getRepeatCount() == 0) {
+                        executeMenu();
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_BACK:
+                    closeMenu();
+                    return true;
+                default:
+                    return true;
+            }
         }
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_LEFT:

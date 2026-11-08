@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -153,6 +154,27 @@ public final class LauncherActivity extends Activity implements AppGridView.List
     @Override
     public void onOrderChanged() {
         repository.saveOrder(grid.getApps());
+    }
+
+    @Override
+    public void onMenuAction(int action, AppEntry app) {
+        switch (action) {
+            case AppGridView.ACTION_OPEN:
+                onLaunch(app);
+                break;
+            case AppGridView.ACTION_MOVE:
+                grid.startMove();
+                break;
+            case AppGridView.ACTION_INFO:
+                start(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse("package:" + app.pkg)));
+                break;
+            case AppGridView.ACTION_UNINSTALL:
+                start(new Intent(Intent.ACTION_DELETE, Uri.parse("package:" + app.pkg)));
+                break;
+            default:
+                break;
+        }
     }
 
     // ----------------------------------------------------------------- internals
