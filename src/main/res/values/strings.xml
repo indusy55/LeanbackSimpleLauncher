@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simple TV Launcher</string>
+    <string name="settings">Settings</string>
+    <string name="hold_to_move">Hold OK to move apps</string>
+    <string name="move">Move</string>
+    <string name="drop">Drop</string>
+    <string name="cancel">Cancel</string>
+    <string name="empty">No apps</string>
+</resources>

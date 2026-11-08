@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/topbar_height"
+        android:paddingStart="@dimen/safe_x"
+        android:paddingTop="@dimen/safe_top"
+        android:paddingEnd="@dimen/safe_x">
+
+        <TextView
+            android:id="@+id/settings"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/pill_height"
+            android:layout_gravity="start|center_vertical"
+            android:background="@drawable/pill"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_settings"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/pill_text"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="18dp"
+            android:text="@string/settings"
+            android:textColor="@color/pill_text"
+            android:textSize="@dimen/pill_text_size" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|top"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/clock_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:textColor="@color/text"
+                android:textSize="@dimen/clock_time_size" />
+
+            <TextView
+                android:id="@+id/clock_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:includeFontPadding="false"
+                android:textColor="@color/muted"
+                android:textSize="@dimen/clock_date_size" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@color/divider" />
+    </FrameLayout>
+
+    <com.indusy.leanback.simple.launcher.AppGridView
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

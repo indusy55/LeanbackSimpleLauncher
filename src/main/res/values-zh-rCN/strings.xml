@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">简易电视桌面</string>
+    <string name="settings">设置</string>
+    <string name="hold_to_move">长按 OK 移动应用</string>
+    <string name="move">移动</string>
+    <string name="drop">放置</string>
+    <string name="cancel">取消</string>
+    <string name="empty">没有应用</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#FF0B0C0F</color>
+    <color name="surface">#FF17181D</color>
+    <color name="surface_focus">#FFEDEEF2</color>
+    <color name="text">#FFF4F5F7</color>
+    <color name="text_dim">#FFC6CAD3</color>
+    <color name="muted">#FF8A909C</color>
+    <color name="accent">#FF4C8DFF</color>
+    <color name="divider">#12FFFFFF</color>
+    <color name="pill_bg">#0AFFFFFF</color>
+    <color name="pill_stroke">#1AFFFFFF</color>
+    <color name="icon_placeholder">#14FFFFFF</color>
+    <color name="hint">#57FFFFFF</color>
+</resources>

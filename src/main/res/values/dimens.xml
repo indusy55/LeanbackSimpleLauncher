@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 5% overscan safe area of a 1280x720dp screen -->
+    <dimen name="safe_x">64dp</dimen>
+    <dimen name="safe_top">36dp</dimen>
+
+    <dimen name="topbar_height">124dp</dimen>
+    <dimen name="pill_height">44dp</dimen>
+    <dimen name="clock_time_size">38sp</dimen>
+    <dimen name="clock_date_size">16sp</dimen>
+    <dimen name="pill_text_size">17sp</dimen>
+</resources>

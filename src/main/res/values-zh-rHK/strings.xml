@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">簡易電視桌面</string>
+    <string name="settings">設定</string>
+    <string name="hold_to_move">長按 OK 移動應用</string>
+    <string name="move">移動</string>
+    <string name="drop">放置</string>
+    <string name="cancel">取消</string>
+    <string name="empty">沒有應用程式</string>
+</resources>
